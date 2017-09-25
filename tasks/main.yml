@@ -1,0 +1,14 @@
+---
+- name: Configure sshd for 2FA
+  become: yes
+  blockinfile:
+    path: "{{ sshdconfig }}"
+    block: |
+      Match User {{ ansible_user_id }}
+          PasswordAuthentication no
+      Match User *,!{{ ansible_user_id }}
+          PasswordAuthentication yes
+          PubkeyAuthentication yes
+          AuthenticationMethods publickey,password
+  notify: restart sshd
+  
